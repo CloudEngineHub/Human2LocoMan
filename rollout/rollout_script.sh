@@ -1,0 +1,11 @@
+python rollout.py \
+    --use_real_robot \
+    --operate_mode 1 \
+    --use_wrist_camera \
+    --inference_interval 60 \
+    --action_chunk_size 60 \
+    --policy_type 0 \
+    --embodiment_config_path your/path/to/embodiments.yaml \
+    --trunk_config_path your/path/to/transformer_trunk.yaml \
+    --model_path your/path/to/model.pth \
+    --hpt_domain only_needed_for_hpt

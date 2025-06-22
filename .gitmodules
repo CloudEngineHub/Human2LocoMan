@@ -1,0 +1,6 @@
+[submodule "locoman/unitree_legged_sdk"]
+	path = locoman/unitree_legged_sdk
+	url = https://github.com/unitreerobotics/unitree_legged_sdk.git
+[submodule "algos/hpt_locoman"]
+	path = algos/hpt_locoman
+	url = https://github.com/alafumee/hpt_locoman.git

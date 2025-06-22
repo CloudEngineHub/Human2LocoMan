@@ -1,0 +1,12 @@
+demonstrations
+ckpt
+__pycache__/
+*.pyc
+*egg-info/
+ckpt_*
+*.txt
+*.pem
+*.log
+result_*
+wandb
+temp
