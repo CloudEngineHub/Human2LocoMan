@@ -494,7 +494,7 @@ If you find `Human2LocoMan` helpful to your research, please consider citing the
 ```bibtex
 @inproceedings{niu2025human2locoman,
   title={Human2LocoMan: Learning Versatile Quadrupedal Manipulation with Human Pretraining},
-  author={Niu, Yaru and Zhang, Yunzhe and Yu, Mingyang and Lin, Changyi and Li, Chenhao and Wang, Yikai and Yang, Yuxiang and Yu, Wenhao and Zhang, Tingnan and Chen, Bingqing and Francis, Jonathan and Li, Zhenzhen and Tan, Jie and Zhao, Ding},
+  author={Niu, Yaru and Zhang, Yunzhe and Yu, Mingyang and Lin, Changyi and Li, Chenhao and Wang, Yikai and Yang, Yuxiang and Yu, Wenhao and Zhang, Tingnan and Li, Zhenzhen and Francis, Jonathan and Chen, Bingqing and Tan, Jie and Zhao, Ding},
   booktitle={Robotics: Science and Systems (RSS)},
   year={2025}
 }
