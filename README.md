@@ -32,7 +32,7 @@
 <p align="center">
     Robotics: Science and Systems (RSS) 2025<br />
     <a href="https://human2bots.github.io/">Website</a> |
-    <a href="https://human2bots.github.io/static/pdfs/human2locoman_rss_2025.pdf">Paper</a>
+    <a href="https://www.arxiv.org/pdf/2506.16475">Paper</a>
 </p>
 <p align="center">
   <img src="doc/figures/system_overview.png" alt="Descriptive Alt Text" width="100%"/>
