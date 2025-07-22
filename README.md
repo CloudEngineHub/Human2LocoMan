@@ -15,9 +15,9 @@
   <a href="https://yxyang.github.io/" target="_blank">Yuxiang Yang</a><sup>2</sup>&nbsp;&nbsp;&nbsp;
   <a href="https://wenhaoyu.weebly.com/" target="_blank">Wenhao Yu</a><sup>2</sup>&nbsp;&nbsp;&nbsp;
   <a href="https://research.google/people/tingnanzhang/?&type=google" target="_blank">Tingnan Zhang</a><sup>2</sup>&nbsp;&nbsp;&nbsp;
-  <a href="https://scholar.google.com/citations?user=LYt_2MgAAAAJ&hl=en" target="_blank">Bingqing Chen</a><sup>3</sup>&nbsp;&nbsp;&nbsp;
-  <a href="https://jonfranc.com/" target="_blank">Jonathan Francis</a><sup>1,3</sup>&nbsp;&nbsp;&nbsp;
   <a href="https://scholar.google.com/citations?user=6LYI6uUAAAAJ&hl=en" target="_blank">Zhenzhen Li</a><sup>3</sup>&nbsp;&nbsp;&nbsp;
+  <a href="https://jonfranc.com/" target="_blank">Jonathan Francis</a><sup>1,3</sup>&nbsp;&nbsp;&nbsp;
+  <a href="https://scholar.google.com/citations?user=LYt_2MgAAAAJ&hl=en" target="_blank">Bingqing Chen</a><sup>3</sup>&nbsp;&nbsp;&nbsp;
   <br />
   <a href="https://www.jie-tan.net/" target="_blank">Jie Tan</a><sup>2</sup>&nbsp;&nbsp;&nbsp;
   <a href="https://www.meche.engineering.cmu.edu/directory/bios/zhao-ding.html" target="_blank">Ding Zhao</a><sup>1</sup>&nbsp;&nbsp;&nbsp;
@@ -32,7 +32,8 @@
 <p align="center">
     Robotics: Science and Systems (RSS) 2025<br />
     <a href="https://human2bots.github.io/">Website</a> |
-    <a href="https://www.arxiv.org/pdf/2506.16475">Paper</a>
+    <a href="https://www.arxiv.org/pdf/2506.16475">Paper</a> |
+    <a href="https://huggingface.co/datasets/chrisyrniu/human2locoman">Dataset</a>
 </p>
 <p align="center">
   <img src="doc/figures/system_overview.png" alt="Descriptive Alt Text" width="100%"/>
