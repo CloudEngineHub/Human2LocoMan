@@ -419,6 +419,44 @@ python -u algos/train_mxt.py \
     --wandb \
     --wandb_name name_for_wandb_experiment
 ```
+#### Quick Start: Finetune Our HuggingFace Models with Our Data
+To get started right away, you may use the pretrained models and datasets we provide to try training yourself.
+1. Visit our [models page](https://huggingface.co/chrisyrniu/mxt/tree/main) and download the pretrained model checkpoint of a task you like, e.g. toy_collect, along with its corresponding `config.json` file.
+2. Visit our [dataset page](https://huggingface.co/datasets/chrisyrniu/human2locoman/tree/main) and download the **LocoMan** data at `<task_name>/locoman`. Put all files in `locoman` at any path you like, e.g. `data/task_name/locoman`.
+3. Check the configurations in the `config.json` file and properly configure the MXT network for training. Specifically, modify `embodiments.yaml` and `transformer_trunk.yaml` at `algos/detr/models/mxt_definitions/configs/` as needed. All their fields should be consistent with `/policy_config/embodiment_args_dict` and `/policy_config/transformer_args` in the `json` file, respectively.
+4. Install the [dependencies](#installation) (only step 2 is required for training) and run the following script to start training:
+
+```bash
+python -u algos/train_mxt.py \
+    --ckpt_dir your/desired/ckpt/dir \
+    --dataset_dir data/task_name/locoman \
+    --embodiment_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/embodiments.yaml \
+    --trunk_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
+    --policy_class MXT \
+    --task_name task_name_for_saving_results \
+    --train_ratio 0.99 \
+    --min_val_num 1 \
+    --batch_size 32 \
+    --lr 5e-5 \
+    --lr_tokenizer 5e-5 \
+    --lr_action_head 5e-5 \
+    --lr_trunk 5e-5 \
+    --seed 6 \
+    --num_steps 160000 \
+    --validate_every 1000 \
+    --save_every 8000 \
+    --chunk_size 60 \
+    --no_encoder \
+    --same_backbones \
+    --feature_loss_weight 0.0 \
+    --width 1280 \
+    --height 480 \
+    --use_wrist \
+    --load_pretrain \
+    --pretrained_path downloaded/human/ckpt/dir/policy_last.ckpt \
+    --wandb \
+    --wandb_name name_for_wandb_experiment
+```
 
 ### ACT or HIT Training
 
