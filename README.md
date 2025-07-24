@@ -93,6 +93,7 @@ We recommend using `Ubuntu 20.04`, while we also successfully test this codebase
 1. Create a new virtual environment under Python 3.6, 3.7, 3.8 (3.8 recommended).
     ```bash
     conda create -n human2locoman python=3.8
+    conda activate human2locoman
     ```
 2. Install dependencies:
     ```bash
@@ -420,20 +421,25 @@ python -u algos/train_mxt.py \
     --wandb_name name_for_wandb_experiment
 ```
 #### Quick Start: Finetune Our HuggingFace Models with Our Data
-To get started right away, you may use the pretrained models and datasets we provide to try training yourself.
-1. Visit our [models page](https://huggingface.co/chrisyrniu/mxt/tree/main) and download the pretrained model checkpoint of a task you like, e.g. toy_collect, along with its corresponding `config.json` file.
-2. Visit our [dataset page](https://huggingface.co/datasets/chrisyrniu/human2locoman/tree/main) and download the **LocoMan** data at `<task_name>/locoman`. Put all files in `locoman` at any path you like, e.g. `data/task_name/locoman`.
-3. Check the configurations in the `config.json` file and properly configure the MXT network for training. Specifically, modify `embodiments.yaml` and `transformer_trunk.yaml` at `algos/detr/models/mxt_definitions/configs/` as needed. All their fields should be consistent with `/policy_config/embodiment_args_dict` and `/policy_config/transformer_args` in the `json` file, respectively.
-4. Install the [dependencies](#installation) (only step 2 is required for training) and run the following script to start training:
+To get started right away, you may use the pretrained models and datasets we provide to try training yourself. The script below creates a vitual environment from scratch, downloads the example model and data, and launches training to finetune the pretrained model on our LocoMan data. 
+
+Before training, You may need to check the configurations in the downloaded config file (e.g. `toy_collect_config.json`) and properly configure the MXT network for training. Specifically, modify `embodiments.yaml` and `transformer_trunk.yaml` at `algos/detr/models/mxt_definitions/configs/` as needed. All fields in `transformer_trunk.yaml` should be consistent with `/policy_config/transformer_args` in the `json` file. Though the tokenizers / detokenizers will be retrained while finetuning, we recommend setting the parameters in `embodiments.yaml` according to `/policy_config/embodiment_args_dict`; however, the fields `action_head/<modality_name>/action_horizon` can be simultaneously modified to be any fixed chunk size you like.
 
 ```bash
+cd ~ && git clone https://github.com/chrisyrniu/Human2LocoMan.git && \
+conda create -n human2locoman python=3.8 && conda activate human2locoman && pip install -e . && conda install pinocchio -c conda-forge && \
+pip install huggingface_hub && cd ~/Human2LocoMan && \
+python -c "from huggingface_hub import snapshot_download; repo_id = 'chrisyrniu/human2locoman'; local_dir = 'data'; files_to_download = 'toy_collect_unimanual/locoman/*'; snapshot_download(repo_id=repo_id, local_dir=local_dir, allow_patterns=files_to_download, repo_type='dataset')" && \
+wget https://huggingface.co/chrisyrniu/mxt/resolve/main/toy_collect.ckpt && \
+wget https://huggingface.co/chrisyrniu/mxt/resolve/main/toy_collect_config.json && \
+mv toy_collect.ckpt ./models/toy_collect.ckpt && mv toy_collect_config.json ./pretrained_configs/toy_collect_configs.json && \
 python -u algos/train_mxt.py \
-    --ckpt_dir your/desired/ckpt/dir \
-    --dataset_dir data/task_name/locoman \
+    --ckpt_dir ckpt/toy_collect_unimanual/finetuned \
+    --dataset_dir data/toy_collect_unimanual/locoman \
     --embodiment_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/embodiments.yaml \
     --trunk_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
     --policy_class MXT \
-    --task_name task_name_for_saving_results \
+    --task_name toy_collect_unimanual_finetuned \
     --train_ratio 0.99 \
     --min_val_num 1 \
     --batch_size 32 \
@@ -453,9 +459,7 @@ python -u algos/train_mxt.py \
     --height 480 \
     --use_wrist \
     --load_pretrain \
-    --pretrained_path downloaded/human/ckpt/dir/policy_last.ckpt \
-    --wandb \
-    --wandb_name name_for_wandb_experiment
+    --pretrained_path ~/Human2LocoMan/models/toy_collect.ckpt
 ```
 
 ### ACT or HIT Training
