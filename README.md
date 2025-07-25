@@ -345,24 +345,24 @@ root
 
 ## Training and Evaluation
 
-Example training scripts can be found at `algos/training_scripts/`. You need to specify the desired checkpoint folder and the dataset path. The dataset should be a directory containing (possibly nested) hdf5 files of recorded trakectories. 
+Example training scripts can be found at `algos/training_scripts/`. You need to specify the desired checkpoint folder and the dataset path. The dataset should be a directory containing (possibly nested) hdf5 files of recorded trajectories. 
 
 ### Dependencies for policy learning
 First, please make sure you have installed the other dependencies in `requirements.txt` as in the 2nd step of [Installation](#installation). When you install IsaacGym, a very recent version of PyTorch could be installed as well. However, for training, We recommend using the following versions of dependencies to avoid compatibility issues:
 ```bash
 conda install pytorch==1.13.0 torchvision==0.14.0 torchaudio==0.13.0 pytorch-cuda=11.7 -c pytorch -c nvidia && conda install mkl==2024.0.0
 ```
-When you install IsaacGym via pip, this may create two versions of PyTorch in your environment. You can remove the one installed by pip with `pip uninstall torch`. Note that if you do not plan to teleoperate or collect data in the simulation, you can skip installing IsaacGym.
+When you install IsaacGym via pip, this may create two versions of PyTorch in your environment. You can remove the one installed by pip with `pip uninstall torch`. Note that if you do not plan to teleoperate or collect data in the simulation, you can skip installing IsaacGym, ROS, Go1 SDK, etc.
 
 ### MXT Training
 #### Modularized Network Configs
-We use standalone config files at `algos/detr/models/mxt_definitions/configs` to control the configs of the modularized tokenizers and detokenizers (`embodiments.yaml`) and the trunk (`transformer_trunk.yaml`). 
+We use standalone config files at `algos/detr/models/mxt_definitions/configs` to control the configurations of the modularized tokenizers and detokenizers (`embodiments.yaml`) and the trunk (`transformer_trunk.yaml`). 
 
 Feel free to modify the config files to accommodate your needs. We recommend you to explore and use different configs for different training stages and settings. For example, we find that a larger dropout rate (0.4 to 0.6) in the transformer body may improve training results.
 
 #### Pretraining and Finetuning
 
-First pretrain on human data: refer to `algos/training_scripts/mxt_script_template.sh` for an example script. You may use use a larger learning rate like 1e-4 for this stage.
+First pretrain on human data: refer to `algos/training_scripts/mxt_script_template.sh` for an example script. You may use a larger learning rate like 1e-4 for this stage.
 
 For all following exmaples, you can either use `train_ratio` (selecting the validation data files proportionately) or `min_val_num` (using a minimum number of validation data files) to control the size of the validation split.
 
@@ -396,7 +396,7 @@ python -u algos/train_mxt.py \
     --wandb_name name_for_wandb_experiment
 ```
 
-Then finetune on teleoperation data: refer to `algos/training_scripts/mxt_finetune_script_template.sh` for an example script. The main difference is that you need to specify the `--load_pretrain` flag and provide a path to the pretrained checkpoint. You may use a smaller learning rate like 5e-5 for this stage.
+Then finetune on the robot data: refer to `algos/training_scripts/mxt_finetune_script_template.sh` for an example script. The main difference is that you need to specify the `--load_pretrain` flag and provide a path to the pretrained checkpoint. You may use a smaller learning rate like 5e-5 for this stage.
 
 ```bash
 python -u algos/train_mxt.py \
@@ -432,7 +432,7 @@ python -u algos/train_mxt.py \
 
 #### Training from Scratch on Robot Data
 
-You can also use `algos/training_scripts/mxt_script_template.sh` for training from scratch. You only need to provide the path to a robot dataset and adjust some hyperparameters.
+You may still refer to `algos/training_scripts/mxt_script_template.sh` for training the model from scratch. You only need to provide the path to a robot dataset and adjust some hyperparameters.
 
 ```bash
 python -u algos/train_mxt.py \
