@@ -48,8 +48,9 @@
 * Policy rollout and evaluation pipeline
 
 ## Outline
+- [Quick Start](#quick-start)
 - [Code Structure](#code-structure)
-- [Installation](#installation)
+- [Full Installation](#full-installation)
 - [Hardware and Robot Setup](#hardware-and-robot-setup)
 - [Human Data Collection](#human-data-collection)
 - [Robot Data Collection](#robot-data-collection)
@@ -58,6 +59,48 @@
 - [Supported Embodiments](#supported-embodiments)
 - [Acknowledgement](#acknowledgement)
 - [Citation](#citation)
+
+## Quick Start
+### Finetune Pretrained MXT with Robot Data from Hugging Face
+To get started quickly, you can use our pretrained [MXT checkpoints](https://huggingface.co/chrisyrniu/mxt) and [datasets](https://huggingface.co/datasets/chrisyrniu/human2locoman) from Hugging Face for your own training. The script below creates a virtual environment (for training only) from scratch, downloads the example model and dataset, and finetunes the human-pretrained model on our LocoMan data.  
+
+```bash
+cd ~ && git clone https://github.com/chrisyrniu/Human2LocoMan.git && \
+conda create -n human2locoman python=3.8 && conda activate human2locoman && cd ~/Human2LocoMan && pip install -e . && \
+python -c "from huggingface_hub import snapshot_download; repo_id = 'chrisyrniu/human2locoman'; local_dir = 'data'; files_to_download = 'toy_collect_unimanual/locoman/*'; snapshot_download(repo_id=repo_id, local_dir=local_dir, allow_patterns=files_to_download, repo_type='dataset')" && \
+wget https://huggingface.co/chrisyrniu/mxt/resolve/main/toy_collect.ckpt && \
+wget https://huggingface.co/chrisyrniu/mxt/resolve/main/toy_collect_config.json && \
+mkdir models && mkdir pretrained_configs \
+mv toy_collect.ckpt ./models/toy_collect.ckpt && mv toy_collect_config.json ./pretrained_configs/toy_collect_configs.json && \
+python -u algos/train_mxt.py \
+    --ckpt_dir ckpt/toy_collect_unimanual/finetuned \
+    --dataset_dir data/toy_collect_unimanual/locoman \
+    --embodiment_config_path algos/detr/models/mxt_definitions/configs/embodiments.yaml \
+    --trunk_config_path algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
+    --policy_class MXT \
+    --task_name toy_collect_unimanual_finetuned \
+    --train_ratio 0.90 \
+    --min_val_num 1 \
+    --batch_size 16 \
+    --lr 5e-5 \
+    --lr_tokenizer 5e-5 \
+    --lr_action_head 5e-5 \
+    --lr_trunk 5e-5 \
+    --seed 6 \
+    --num_steps 60000 \
+    --validate_every 1000 \
+    --save_every 5000 \
+    --chunk_size 60 \
+    --no_encoder \
+    --same_backbones \
+    --feature_loss_weight 0.0 \
+    --width 1280 \
+    --height 480 \
+    --use_wrist \
+    --load_pretrain \
+    --pretrained_path models/toy_collect.ckpt
+```
+As a note, you could check the configurations in the downloaded config file (e.g., `toy_collect_config.json`) and adjust the MXT network as needed. Specifically, modify `embodiments.yaml` and `transformer_trunk.yaml` located in `algos/detr/models/mxt_definitions/configs/`. All fields (except `dropout`) in `transformer_trunk.yaml` should be consistent with `/policy_config/transformer_args` in the pretraining `json` file. In `embodiments.yaml`, ensure that `output_dim` for `locoman/tokenizer` and `input_dim` for `locoman/action_head` match those of `human/tokenizer` and `human/action_head` in the `json` file, respectively.
 
 ## Code Structure
 
@@ -88,7 +131,7 @@ root
 
 ```
 
-## Installation 
+## Full Installation 
 We recommend using `Ubuntu 20.04`, while we also successfully test this codebase on `Ubuntu 22.04`.
 1. Create a new virtual environment under Python 3.6, 3.7, 3.8 (3.8 recommended).
     ```bash
@@ -419,48 +462,6 @@ python -u algos/train_mxt.py \
     --use_wrist \
     --wandb \
     --wandb_name name_for_wandb_experiment
-```
-#### Quick Start: Finetune Our Pretrained Models with Our Data from Hugging Face
-To get started quickly, you can use the pretrained models and datasets we provide to run your own training. The script below sets up a virtual environment from scratch, downloads the example model and dataset, and launches training to finetune the pretrained model on our LocoMan data.  
-
-Before training, check the configurations in the downloaded config file (e.g., `toy_collect_config.json`) and adjust the MXT network as needed. Specifically, modify `embodiments.yaml` and `transformer_trunk.yaml` located in `algos/detr/models/mxt_definitions/configs/`. All fields (except `dropout`) in `transformer_trunk.yaml` should be consistent with `/policy_config/transformer_args` in the pretraining `json` file. In `embodiments.yaml`, ensure that `output_dim` for `locoman/tokenizer` and `input_dim` for `locoman/action_head` match those of `human/tokenizer` and `human/action_head` in the `json` file, respectively.
-
-```bash
-cd ~ && git clone https://github.com/chrisyrniu/Human2LocoMan.git && \
-conda create -n human2locoman python=3.8 && conda activate human2locoman && pip install -e . && conda install pinocchio -c conda-forge && \
-pip install huggingface_hub && cd ~/Human2LocoMan && \
-python -c "from huggingface_hub import snapshot_download; repo_id = 'chrisyrniu/human2locoman'; local_dir = 'data'; files_to_download = 'toy_collect_unimanual/locoman/*'; snapshot_download(repo_id=repo_id, local_dir=local_dir, allow_patterns=files_to_download, repo_type='dataset')" && \
-wget https://huggingface.co/chrisyrniu/mxt/resolve/main/toy_collect.ckpt && \
-wget https://huggingface.co/chrisyrniu/mxt/resolve/main/toy_collect_config.json && \
-mkdir models && mkdir pretrained_configs \
-mv toy_collect.ckpt ./models/toy_collect.ckpt && mv toy_collect_config.json ./pretrained_configs/toy_collect_configs.json && \
-python -u algos/train_mxt.py \
-    --ckpt_dir ckpt/toy_collect_unimanual/finetuned \
-    --dataset_dir data/toy_collect_unimanual/locoman \
-    --embodiment_config_path algos/detr/models/mxt_definitions/configs/embodiments.yaml \
-    --trunk_config_path algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
-    --policy_class MXT \
-    --task_name toy_collect_unimanual_finetuned \
-    --train_ratio 0.90 \
-    --min_val_num 1 \
-    --batch_size 16 \
-    --lr 5e-5 \
-    --lr_tokenizer 5e-5 \
-    --lr_action_head 5e-5 \
-    --lr_trunk 5e-5 \
-    --seed 6 \
-    --num_steps 60000 \
-    --validate_every 1000 \
-    --save_every 5000 \
-    --chunk_size 60 \
-    --no_encoder \
-    --same_backbones \
-    --feature_loss_weight 0.0 \
-    --width 1280 \
-    --height 480 \
-    --use_wrist \
-    --load_pretrain \
-    --pretrained_path models/toy_collect.ckpt
 ```
 
 ### ACT or HIT Training
