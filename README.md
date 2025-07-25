@@ -363,9 +363,9 @@ python -u algos/train_mxt.py \
     --trunk_config_path algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
     --policy_class MXT \
     --task_name task_name_for_saving_results \
-    --train_ratio 0.99 \
+    --train_ratio 0.95 \
     --min_val_num 1 \
-    --batch_size 32 \
+    --batch_size 16 \
     --lr 5e-5 \
     --lr_tokenizer 5e-5 \
     --lr_action_head 5e-5 \
@@ -389,7 +389,7 @@ python -u algos/train_mxt.py \
 
 #### Training from Scratch on Robot Data
 
-You can also use the `algos/training_scripts/mxt_script_template.sh` for training from scratch. You only need to provide the path to a robot dataset.
+You can also use `algos/training_scripts/mxt_script_template.sh` for training from scratch. You only need to provide the path to a robot dataset and adjust some hyperparameters.
 
 ```bash
 python -u algos/train_mxt.py \
@@ -399,7 +399,7 @@ python -u algos/train_mxt.py \
     --trunk_config_path algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
     --policy_class MXT \
     --task_name task_name_for_saving_results \
-    --train_ratio 0.99 \
+    --train_ratio 0.95 \
     --min_val_num 1 \
     --batch_size 16 \
     --lr 5e-5 \
@@ -473,14 +473,14 @@ python -u algos/train_hit_or_act.py \
     --dataset_dir your/dataset/dir \
     --policy_class <HIT or ACT> \
     --task_name task_name_for_saving_results \
-    --train_ratio 0.99 \
+    --train_ratio 0.95 \
     --min_val_num 1 \
     --batch_size 24 \
     --lr 2e-5 \
     --seed 6 \
     --hidden_dim 128 \
     --num_steps 100000 \
-    --validate_every 500 \
+    --validate_every 1000 \
     --save_every 5000 \
     --chunk_size 120 \
     --same_backbones \

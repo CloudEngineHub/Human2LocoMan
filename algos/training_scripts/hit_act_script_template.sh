@@ -5,14 +5,14 @@ python -u algos/train_hit_or_act.py \
     --dataset_dir your/dataset/dir \
     --policy_class <HIT or ACT> \
     --task_name task_name_for_saving_results \
-    --train_ratio 0.99 \
+    --train_ratio 0.95 \
     --min_val_num desired_val_file_num \
     --batch_size 24 \
     --lr 2e-5 \
     --seed 6 \
     --hidden_dim 128 \
     --num_steps 100000 \
-    --validate_every 500 \
+    --validate_every 1000 \
     --save_every 5000 \
     --chunk_size 120 \
     --same_backbones \
