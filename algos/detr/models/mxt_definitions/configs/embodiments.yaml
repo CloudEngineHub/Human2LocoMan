@@ -11,12 +11,12 @@ locoman:
       resnet_model: resnet18
       num_of_copy: 1
       token_num: 16
-    # wrist_image:
-    #   output_dim: 128
-    #   weights: DEFAULT
-    #   resnet_model: resnet18
-    #   num_of_copy: 1
-    #   token_num: 8
+    wrist_image:
+      output_dim: 128
+      weights: DEFAULT
+      resnet_model: resnet18
+      num_of_copy: 1
+      token_num: 8
     body_pose_state:
       input_dim: 6
       output_dim: 128
@@ -53,7 +53,7 @@ locoman:
       crossattn_modality_dropout: 0.1
       crossattn_heads: 4
       crossattn_dim_head: 16
-      action_horizon: 120
+      action_horizon: 60
     body_pose:
       type: transformer
       input_dim: 128
@@ -61,7 +61,7 @@ locoman:
       crossattn_modality_dropout: 0.1
       crossattn_heads: 4
       crossattn_dim_head: 16
-      action_horizon: 120
+      action_horizon: 60
     gripper:
       type: transformer
       input_dim: 128
@@ -69,7 +69,7 @@ locoman:
       crossattn_modality_dropout: 0.1
       crossattn_heads: 4
       crossattn_dim_head: 16
-      action_horizon: 120
+      action_horizon: 60
 human:
   tokenizer:
     hidden_dim: 128
@@ -124,7 +124,7 @@ human:
       crossattn_modality_dropout: 0.1
       crossattn_heads: 4
       crossattn_dim_head: 16
-      action_horizon: 120
+      action_horizon: 60
     body_pose:
       type: transformer
       input_dim: 128
@@ -132,7 +132,7 @@ human:
       crossattn_modality_dropout: 0.1
       crossattn_heads: 4
       crossattn_dim_head: 16
-      action_horizon: 120
+      action_horizon: 60
     gripper:
       type: transformer
       input_dim: 128
@@ -140,4 +140,4 @@ human:
       crossattn_modality_dropout: 0.1
       crossattn_heads: 4
       crossattn_dim_head: 16
-      action_horizon: 120
+      action_horizon: 60

@@ -4,7 +4,7 @@ output_len:
   gripper: 6
 trunk_mode: encoder_decoder
 hidden_dim: 128
-dropout: 0.4
+dropout: 0.1
 nheads: 16
 dim_feedforward: 256
 enc_layers: 4

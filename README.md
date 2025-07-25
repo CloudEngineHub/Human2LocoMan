@@ -327,8 +327,8 @@ For all following exmaples, you can either use `train_ratio` (selecting the vali
 python -u algos/train_mxt.py \
     --ckpt_dir your/desired/human/ckpt/dir \
     --dataset_dir your/human/dataset/dir \
-    --embodiment_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/embodiments.yaml \
-    --trunk_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
+    --embodiment_config_path algos/detr/models/mxt_definitions/configs/embodiments.yaml \
+    --trunk_config_path algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
     --policy_class MXT \
     --task_name task_name_for_saving_results \
     --train_ratio 0.99 \
@@ -359,8 +359,8 @@ Then finetune on teleoperation data: refer to `algos/training_scripts/mxt_finetu
 python -u algos/train_mxt.py \
     --ckpt_dir your/desired/ckpt/dir \
     --dataset_dir your/locoman/dataset/dir \
-    --embodiment_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/embodiments.yaml \
-    --trunk_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
+    --embodiment_config_path algos/detr/models/mxt_definitions/configs/embodiments.yaml \
+    --trunk_config_path algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
     --policy_class MXT \
     --task_name task_name_for_saving_results \
     --train_ratio 0.99 \
@@ -371,9 +371,9 @@ python -u algos/train_mxt.py \
     --lr_action_head 5e-5 \
     --lr_trunk 5e-5 \
     --seed 6 \
-    --num_steps 160000 \
+    --num_steps 60000 \
     --validate_every 1000 \
-    --save_every 8000 \
+    --save_every 5000 \
     --chunk_size 60 \
     --no_encoder \
     --same_backbones \
@@ -395,21 +395,21 @@ You can also use the `algos/training_scripts/mxt_script_template.sh` for trainin
 python -u algos/train_mxt.py \
     --ckpt_dir your/desired/ckpt/dir \
     --dataset_dir your/locoman/dataset/dir \
-    --embodiment_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/embodiments.yaml \
-    --trunk_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
+    --embodiment_config_path algos/detr/models/mxt_definitions/configs/embodiments.yaml \
+    --trunk_config_path algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
     --policy_class MXT \
     --task_name task_name_for_saving_results \
     --train_ratio 0.99 \
     --min_val_num 1 \
-    --batch_size 32 \
+    --batch_size 16 \
     --lr 5e-5 \
     --lr_tokenizer 5e-5 \
     --lr_action_head 5e-5 \
     --lr_trunk 5e-5 \
     --seed 6 \
-    --num_steps 160000 \
+    --num_steps 60000 \
     --validate_every 1000 \
-    --save_every 8000 \
+    --save_every 5000 \
     --chunk_size 60 \
     --no_encoder \
     --same_backbones \
@@ -420,10 +420,10 @@ python -u algos/train_mxt.py \
     --wandb \
     --wandb_name name_for_wandb_experiment
 ```
-#### Quick Start: Finetune Our HuggingFace Models with Our Data
-To get started right away, you may use the pretrained models and datasets we provide to try training yourself. The script below creates a vitual environment from scratch, downloads the example model and data, and launches training to finetune the pretrained model on our LocoMan data. 
+#### Quick Start: Finetune Our Pretrained Models with Our Data from Hugging Face
+To get started quickly, you can use the pretrained models and datasets we provide to run your own training. The script below sets up a virtual environment from scratch, downloads the example model and dataset, and launches training to finetune the pretrained model on our LocoMan data.  
 
-Before training, You may need to check the configurations in the downloaded config file (e.g. `toy_collect_config.json`) and properly configure the MXT network for training. Specifically, modify `embodiments.yaml` and `transformer_trunk.yaml` at `algos/detr/models/mxt_definitions/configs/` as needed. All fields in `transformer_trunk.yaml` should be consistent with `/policy_config/transformer_args` in the `json` file. Though the tokenizers / detokenizers will be retrained while finetuning, we recommend setting the parameters in `embodiments.yaml` according to `/policy_config/embodiment_args_dict`; however, the fields `action_head/<modality_name>/action_horizon` can be simultaneously modified to be any fixed chunk size you like.
+Before training, check the configurations in the downloaded config file (e.g., `toy_collect_config.json`) and adjust the MXT network as needed. Specifically, modify `embodiments.yaml` and `transformer_trunk.yaml` located in `algos/detr/models/mxt_definitions/configs/`. All fields (except `dropout`) in `transformer_trunk.yaml` should be consistent with `/policy_config/transformer_args` in the pretraining `json` file. In `embodiments.yaml`, ensure that `output_dim` for `locoman/tokenizer` and `input_dim` for `locoman/action_head` match those of `human/tokenizer` and `human/action_head` in the `json` file, respectively.
 
 ```bash
 cd ~ && git clone https://github.com/chrisyrniu/Human2LocoMan.git && \
@@ -432,25 +432,26 @@ pip install huggingface_hub && cd ~/Human2LocoMan && \
 python -c "from huggingface_hub import snapshot_download; repo_id = 'chrisyrniu/human2locoman'; local_dir = 'data'; files_to_download = 'toy_collect_unimanual/locoman/*'; snapshot_download(repo_id=repo_id, local_dir=local_dir, allow_patterns=files_to_download, repo_type='dataset')" && \
 wget https://huggingface.co/chrisyrniu/mxt/resolve/main/toy_collect.ckpt && \
 wget https://huggingface.co/chrisyrniu/mxt/resolve/main/toy_collect_config.json && \
+mkdir models && mkdir pretrained_configs \
 mv toy_collect.ckpt ./models/toy_collect.ckpt && mv toy_collect_config.json ./pretrained_configs/toy_collect_configs.json && \
 python -u algos/train_mxt.py \
     --ckpt_dir ckpt/toy_collect_unimanual/finetuned \
     --dataset_dir data/toy_collect_unimanual/locoman \
-    --embodiment_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/embodiments.yaml \
-    --trunk_config_path ~/Human2LocoMan/algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
+    --embodiment_config_path algos/detr/models/mxt_definitions/configs/embodiments.yaml \
+    --trunk_config_path algos/detr/models/mxt_definitions/configs/transformer_trunk.yaml \
     --policy_class MXT \
     --task_name toy_collect_unimanual_finetuned \
-    --train_ratio 0.99 \
+    --train_ratio 0.90 \
     --min_val_num 1 \
-    --batch_size 32 \
+    --batch_size 16 \
     --lr 5e-5 \
     --lr_tokenizer 5e-5 \
     --lr_action_head 5e-5 \
     --lr_trunk 5e-5 \
     --seed 6 \
-    --num_steps 160000 \
+    --num_steps 60000 \
     --validate_every 1000 \
-    --save_every 8000 \
+    --save_every 5000 \
     --chunk_size 60 \
     --no_encoder \
     --same_backbones \
@@ -459,7 +460,7 @@ python -u algos/train_mxt.py \
     --height 480 \
     --use_wrist \
     --load_pretrain \
-    --pretrained_path ~/Human2LocoMan/models/toy_collect.ckpt
+    --pretrained_path models/toy_collect.ckpt
 ```
 
 ### ACT or HIT Training
