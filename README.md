@@ -70,7 +70,7 @@ conda create -n human2locoman python=3.8 && conda activate human2locoman && cd ~
 python -c "from huggingface_hub import snapshot_download; repo_id = 'chrisyrniu/human2locoman'; local_dir = 'data'; files_to_download = ['toy_collect_unimanual/locoman/train/normal_objects/20241204_165456/*', 'toy_collect_unimanual/locoman/val/*']; snapshot_download(repo_id=repo_id, local_dir=local_dir, allow_patterns=files_to_download, repo_type='dataset')" && \
 wget https://huggingface.co/chrisyrniu/mxt/resolve/main/toy_collect.ckpt && \
 wget https://huggingface.co/chrisyrniu/mxt/resolve/main/toy_collect_config.json && \
-mkdir models && mkdir pretrained_configs \
+mkdir models && mkdir pretrained_configs && \
 mv toy_collect.ckpt ./models/toy_collect.ckpt && mv toy_collect_config.json ./pretrained_configs/toy_collect_configs.json && \
 python -u algos/train_mxt.py \
     --ckpt_dir ckpt/toy_collect_unimanual/finetuned \

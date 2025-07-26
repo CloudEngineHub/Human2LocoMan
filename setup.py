@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setup(
-    name='loco_manipulation',
+    name='human2locoman',
     version='1.0.0',
     license="BSD-3-Clause",
     packages=find_packages(),

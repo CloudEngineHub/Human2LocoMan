@@ -31,3 +31,4 @@ vuer==0.0.31rc7
 aiohttp==3.9.5
 aiohttp_cors==0.7.0
 pyrealsense2
+huggingface-hub==0.33.5
