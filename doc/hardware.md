@@ -17,10 +17,10 @@ This is an extended documentation of [LocoMan hardware setup](https://github.com
 | 16 | [Bearings 5x8x2.5mm (10pcs)](https://a.co/d/0Kc5usm) | Bearings for the rotational gripper | $8.19 | 1 |
 | 17 | [Dual Lens USB Camera](https://www.amazon.com/dp/B0CBLZJZBT) | Main camera for all embodiments (human, unimanual LocoMan, bimanual LocoMan) | $96.99 | ≥2 |
 | 18 | [USB Camera](https://www.amazon.com/dp/B0C3C2YVK9) (optional) | Wrist camera | $80.99 |  |
-| 19 | [Printed parts of loco-manipulators](loco_manipulators/print/) | 3D prints for loco-manipulators of LocoMan (including optional wrist camera mount) |  |1|
-| 20 | [Printed parts of the human camera mount](camera_mounts/human_apple_vision_pro/) | 3D prints for the camera mount on the Apple Vision Pro |  |1|
-| 21 | [Printed parts of the camera mount for unimanual LocoMan](camera_mounts/unimanual_locoman/) | 3D prints for the main camera mount on unimanual LocoMan |  |1|
-| 22 | [Printed parts of the camera mount for unimanual LocoMan](camera_mounts/bimanual_locoman/) | 3D prints for the main camera mount on bimanual LocoMan |  |1|
+| 19 | [Printed parts of loco-manipulators](../hardware/loco_manipulators/print/) | 3D prints for loco-manipulators of LocoMan (including optional wrist camera mount) |  |1|
+| 20 | [Printed parts of the human camera mount](../hardware/camera_mounts/human_apple_vision_pro/) | 3D prints for the camera mount on the Apple Vision Pro |  |1|
+| 21 | [Printed parts of the camera mount for unimanual LocoMan](../hardware/camera_mounts/unimanual_locoman/) | 3D prints for the main camera mount on unimanual LocoMan |  |1|
+| 22 | [Printed parts of the camera mount for unimanual LocoMan](../hardware/camera_mounts/bimanual_locoman/) | 3D prints for the main camera mount on bimanual LocoMan |  |1|
 
 ### Results
 <p align="center">
