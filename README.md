@@ -272,7 +272,7 @@ The initial mode of the robot is `stance`. Plesae check the [keyboard teleoperat
     ```bash
     python data_collection/collect_human_data.py --control_freq=60 --collect_data=True --manipulate_mode=3 --save_video=True --exp_name=test 
     ```
-3. Open the Safari browser on the Apple Vision Pro, and go to the `Vuer` webpage: `https://your.shared.local.address:8012?ws=wss://your.shared.local.address:8012`, and then enter the VR session.
+3. Make sure you have installed [mkcert](https://github.com/FiloSottile/mkcert) and ca-certificats on Vision Pro following the instruction in [OpenTeleVision](https://github.com/OpenTeleVision/TeleVision). Open the Safari browser on the Apple Vision Pro, and go to the `Vuer` webpage: `https://your.shared.local.address:8012?ws=wss://your.shared.local.address:8012`, and then enter the VR session.
 4. Pinch your left thumb and middle finger to reset/initialize the data recording, untill you see "PINCH to START" in red to show up.
 5. Pinch your left thumb and index finger to start recording.
 When you complete an episode, pinch your left thumb and middle finger to end the recording and reset the session.
