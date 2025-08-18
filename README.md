@@ -299,7 +299,7 @@ Wait while "SAVING DATA" appears on the screen. The system will be ready for the
 - Run `python script/play_fsm.py --use_real_robot=True --use_gripper=True` to reset the robot to the stance mode.
 3. Run teleoperation for unimanual manipulation with the right end effector (`--teleop_mode=1`) with a control frequency of 60 (`--control_freq=60`), while saving the video from the main camera view (`--save_video=True`):
     ```bash
-    python data_collection/avp_teleoperator_vuer.py --use_real_robot=True --teleop_mode=1 --use_wrist_cameara=True --control_freq=60 --collect_data=True --save_video=True --exp_name=test 
+    python data_collection/avp_teleoperator_vuer.py --use_real_robot=True --teleop_mode=1 --use_wrist_camera=True --control_freq=60 --collect_data=True --save_video=True --exp_name=test 
     ```
     For simulation teleop, set `--use_real_robot=False` and `--use_wrist_camera=False`.
 4. Run `python teleoperation/keyboard_reset.py` to control the teleop data streaming, and then press `enter` on the keyboard to start streaming. The robot will switch to the corresponding manipulation mode (`--teleop_mode` from step 3).
