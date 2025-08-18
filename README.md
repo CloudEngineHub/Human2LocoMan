@@ -317,7 +317,7 @@ root
 ├── observations
 │   ├── images
 │   │   ├─ main          # images from main camera: [h * w * c] * traj_length
-│   │   └─ wrist         # images from wrist cameras (at most two, right first): [h * w * c] * traj_length
+│   │   └─ wrist         # images from wrist cameras: [h * w * c] * traj_length
 │   └── proprioceptions       
 │       ├─ body          # 6d pose of the rigid body where the main camera is mounted: [6] * traj_length
 │       ├─ eef           # 6d pose of the end effectors (at most two, right first): [12] * traj_length
@@ -544,8 +544,3 @@ If you find `Human2LocoMan` helpful to your research, please consider citing the
   year={2025}
 }
 ```
-<!-- ## Trouble Shooting -->
-<!-- * Remove the local installed cuda dependencies to use the ones with PyTorch:
-```
-export LD_LIBRARY_PATH=$(echo $LD_LIBRARY_PATH | tr ':' '\n' | grep -v '/usr/local/cuda-12.2/lib64' | tr '\n' ':' | sed 's/:$//')
-``` -->
