@@ -21,7 +21,7 @@ This is an extended documentation of [LocoMan hardware setup](https://github.com
 | 20 | [Printed parts of loco-manipulators](../hardware/loco_manipulators/print/) | 3D prints for loco-manipulators of LocoMan (including optional wrist camera mount) |  |1|
 | 21 | [Printed parts of the human camera mount](../hardware/camera_mounts/human_apple_vision_pro/print/) | 3D prints for the camera mount on the Apple Vision Pro |  |1|
 | 22 | [Printed parts of the camera mount for unimanual LocoMan](../hardware/camera_mounts/unimanual_locoman/print/) | 3D prints for the main camera mount on unimanual LocoMan |  |1|
-| 23 | [Printed parts of the camera mount for unimanual LocoMan](../hardware/camera_mounts/bimanual_locoman/print/) | 3D prints for the main camera mount on bimanual LocoMan |  |1|
+| 23 | [Printed parts of the camera mount for bimanual LocoMan](../hardware/camera_mounts/bimanual_locoman/print/) | 3D prints for the main camera mount on bimanual LocoMan |  |1|
 
 ### Results
 <p align="center">
