@@ -7,12 +7,11 @@ import numpy as np
 from locoman.config.config import Cfg
 from locoman.utilities.orientation_utils_numpy import rot_mat_to_rpy, rpy_to_rot_mat
 from tele_vision import OpenTeleVision
-from sensor_msgs.msg import Image
 import ros_numpy
 import cv2
 import threading
 from camera_utils import list_video_devices, find_device_path_by_name
-from multiprocessing import Array, Process, shared_memory
+from multiprocessing import shared_memory
 import sys
 import signal
 import h5py
@@ -46,23 +45,15 @@ class HumanDataCollector:
         self.init_cameras()
         if self.args.head_camera_type == 0:
             img_shape = (self.head_frame_res[0], self.head_frame_res[1], 3)
-            # wrist_img_shape = (self.wrist_resolution[0], self.wrist_resolution[1], 3)
             self.shm = shared_memory.SharedMemory(create=True, size=np.prod(img_shape) * np.uint8().itemsize, name=Cfg.teleoperation.shm_name)
-            # self.wrist_shm = shared_memory.SharedMemory(create=True, size=np.prod(wrist_img_shape) * np.uint8().itemsize, name=Cfg.teleoperation.wrist_shm_name)
             self.img_array = np.ndarray(img_shape, dtype=np.uint8, buffer=self.shm.buf)
             self.img_array[:] = np.zeros(img_shape, dtype=np.uint8)
-            # self.wrist_img_array = np.ndarray(wrist_img_shape, dtype=np.uint8, buffer=self.wrist_shm.buf)
-            # self.wrist_img_array[:] = np.zeros(wrist_img_shape, dtype=np.uint8)
             self.tele_vision = OpenTeleVision(self.head_frame_res, self.shm.name, False)
         elif self.args.head_camera_type == 1:
             img_shape = (self.head_frame_res[0], 2 * self.head_frame_res[1], 3)
-            # wrist_img_shape = (self.wrist_resolution[0], self.wrist_resolution[1], 3)
             self.shm = shared_memory.SharedMemory(create=True, size=np.prod(img_shape) * np.uint8().itemsize, name=Cfg.teleoperation.shm_name)
-            # self.wrist_shm = shared_memory.SharedMemory(create=True, size=np.prod(wrist_img_shape) * np.uint8().itemsize, name=Cfg.teleoperation.wrist_shm_name)
             self.img_array = np.ndarray(img_shape, dtype=np.uint8, buffer=self.shm.buf)
             self.img_array[:] = np.zeros(img_shape, dtype=np.uint8)
-            # self.wrist_img_array = np.ndarray(wrist_img_shape, dtype=np.uint8, buffer=self.wrist_shm.buf)
-            # self.wrist_img_array[:] = np.zeros(wrist_img_shape, dtype=np.uint8)
             self.tele_vision = OpenTeleVision(self.head_frame_res, self.shm.name, True)
         else:
             raise NotImplementedError("Not supported camera.")
@@ -71,7 +62,6 @@ class HumanDataCollector:
         self.command = np.zeros(20)  # body: xyzrpy, eef_r: xyzrpy, eef_l: xyzrpy, grippers: 2 angles
         self.command_msg = Float32MultiArray()
         self.command_msg.data = self.command.tolist()
-        self.robot_command = np.zeros(20)
         # eef 6d pose in two types of defined unified frame
         self.eef_uni_command = np.zeros((2, 6))
         
@@ -89,20 +79,12 @@ class HumanDataCollector:
         self.is_changing_reveive_status = False
         self.rate = rospy.Rate(200)
         
-        self.robot_reset_msg = Int32()
-        self.robot_reset_msg.data = 0
-
-        self.robot_reset_pose = np.zeros(20)
         self.on_reset = False
         self.on_collect = False
         self.on_save_data = False
-
-        self.robot_state_subscriber = rospy.Subscriber(Cfg.teleoperation.robot_state_topic, Float32MultiArray, self.robot_state_callback, queue_size=1)
         
-        # self.pinch_gripper_angle_scale = 10.0
         self.pinch_dist_gripper_full_close = 0.02
         self.pinch_dist_gripper_full_open = 0.15
-        # self.gripper_full_close_angle = 0.33
         self.gripper_full_close_angle = Cfg.commander.gripper_angle_range[0]
         self.gripper_full_open_angle = Cfg.commander.gripper_angle_range[1]
         self.eef_xyz_scale = 1.0
@@ -179,18 +161,6 @@ class HumanDataCollector:
         self.sim_view_frame = ros_numpy.numpify(msg)
         np.copyto(self.img_array, self.sim_view_frame)
         # self.tele_vision.modify_shared_image(sim_view_image)
-        
-    def robot_state_callback(self, msg):
-        # update joint positions
-        self.joint_pos = np.array(msg.data)[:12]
-        self.joint_vel = np.array(msg.data)[12:]
-
-    # def robot_reset_pose_callback(self, msg):
-    #     self.robot_reset_pose = np.array(msg.data)
-    #     if self.on_reset:
-    #         self.reset_finished = True
-    #         self.on_reset = False
-    #         print('robot reset pose', self.robot_reset_pose)
 
     def init_cameras(self):
         import pyrealsense2 as rs
@@ -214,7 +184,7 @@ class HumanDataCollector:
                     found_rgb = True
                     break
             if not found_rgb:
-                print("a head camera is required for real-robot teleoperation")
+                print("a head camera is required")
                 exit(0)
             self.head_cam_config.enable_stream(rs.stream.color, self.head_camera_resolution[1], self.head_camera_resolution[0], rs.format.bgr8, 30)
             # start streaming head cam
@@ -269,7 +239,6 @@ class HumanDataCollector:
             drawer = PIL.ImageDraw.Draw(im)
             font = PIL.ImageFont.truetype('FreeSans.ttf', size=53)
             drawer.text((width / 8 - 35, (height - 80) / 2), "PINCH to START", font=font, fill=(255, 63, 63))
-            # drawer.text((767, 200), "PINCH to START", font=font, fill=(255, 63, 63))
             viewer_img = np.array(im)
         elif self.on_collect:
             im = PIL.Image.fromarray(self.head_color_frame)
@@ -293,42 +262,6 @@ class HumanDataCollector:
                     self.eef_pose_uni[6*self.manipulate_eef_idx[1]+1], 
                     self.eef_pose_uni[6*self.manipulate_eef_idx[1]+2]
                         ), font=font, fill=(255, 63, 63))
-            # drawer.text((width / 16 - 10, (height - 80) / 4), '{:.2f}, {:.2f}, {:.2f} / {:.2f}, {:.2f}, {:.2f}'.format(
-            #     self.delta_eef_pose_uni[6*self.manipulate_eef_idx], 
-            #     self.delta_eef_pose_uni[6*self.manipulate_eef_idx+1],
-            #     self.delta_eef_pose_uni[6*self.manipulate_eef_idx+2], 
-            #     self.delta_eef_pose_uni[6*self.manipulate_eef_idx+3],
-            #     self.delta_eef_pose_uni[6*self.manipulate_eef_idx+4], 
-            #     self.delta_eef_pose_uni[6*self.manipulate_eef_idx+5]
-            #         ), font=font, fill=(255, 63, 63))
-            # drawer.text((width / 16 - 10, (height - 80) / 4), '{:.2f}, {:.2f}, {:.2f} / {:.2f}, {:.2f}, {:.2f}'.format(
-            #     self.eef_to_body_pose[6*self.manipulate_eef_idx], 
-            #     self.eef_to_body_pose[6*self.manipulate_eef_idx+1],
-            #     self.eef_to_body_pose[6*self.manipulate_eef_idx+2], 
-            #     self.eef_to_body_pose[6*self.manipulate_eef_idx+3],
-            #     self.eef_to_body_pose[6*self.manipulate_eef_idx+4], 
-            #     self.eef_to_body_pose[6*self.manipulate_eef_idx+5]
-            #         ), font=font, fill=(255, 63, 63))
-            # drawer.text((width / 16 - 10, (height - 80) / 4), '{:.2f}, {:.2f}, {:.2f} / {:.2f}, {:.2f}, {:.2f}'.format(
-            #     self.body_pose_uni[0], 
-            #     self.body_pose_uni[1],
-            #     self.body_pose_uni[2], 
-            #     self.body_pose_uni[3],
-            #     self.body_pose_uni[4], 
-            #     self.body_pose_uni[5]
-            #         ), font=font, fill=(255, 63, 63))
-            # drawer.text((width / 16 - 10, (height - 80) / 4), '{:.2f}, {:.2f}, {:.2f} / {:.2f}, {:.2f}, {:.2f}'.format(
-            #     self.delta_body_pose_uni[0], 
-            #     self.delta_body_pose_uni[1],
-            #     self.delta_body_pose_uni[2], 
-            #     self.delta_body_pose_uni[3],
-            #     self.delta_body_pose_uni[4], 
-            #     self.delta_body_pose_uni[5]
-            #         ), font=font, fill=(255, 63, 63))
-            # drawer.text((width / 16 - 10, (height - 80) / 4), '{:.2f}, {:.2f}'.format(
-            #     self.gripper_angle[0], 
-            #     self.gripper_angle[1],
-            #         ), font=font, fill=(255, 63, 63))
             viewer_img = np.array(im)
         return viewer_img
 
@@ -357,13 +290,9 @@ class HumanDataCollector:
                 while not rospy.is_shutdown():
                     start_time = time.time()
                     ret, frame = self.head_cap.read()
-                    # print('frame 0', frame.shape)
                     frame = cv2.resize(frame, (2 * self.head_frame_res[1], self.head_frame_res[0]))
-                    # print('frame 1', frame.shape)
                     image_left = frame[:, :self.head_frame_res[1], :]
-                    # print('image_left', image_left.shape)
                     image_right = frame[:, self.head_frame_res[1]:, :]
-                    # print('image right', image_right.shape)
                     if self.crop_size_w != 0:
                         bgr = np.hstack((image_left[self.crop_size_h:, self.crop_size_w:-self.crop_size_w],
                                         image_right[self.crop_size_h:, self.crop_size_w:-self.crop_size_w]))
@@ -372,15 +301,12 @@ class HumanDataCollector:
                                         image_right[self.crop_size_h:, :]))
 
                     self.head_color_frame = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
-                    # print('self.img_array', self.img_array.shape)
-                    # print('self.head_color_frame', self.head_color_frame.shape)
                     viewer_img = self.prompt_rendering()
                     np.copyto(self.img_array, viewer_img)
                     elapsed_time = time.time() - start_time
                     sleep_time = frame_duration - elapsed_time
                     if sleep_time > 0:
                         time.sleep(sleep_time)
-                    # print(1/(time.time() - start_time))
             finally:
                 self.head_cap.release()
         else:
@@ -393,15 +319,11 @@ class HumanDataCollector:
                 start_time = time.time()
                 ret, frame = self.wrist_cap1.read()
                 wrist_color_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                # print('wrist_color_frame', wrist_color_frame.shape)
                 self.wrist_color_frame = cv2.resize(wrist_color_frame, (self.wrist_view_resolution[1], self.wrist_view_resolution[0]))
-                # print('self.wrist_color_frame', self.wrist_color_frame.shape)
-                # np.copyto(self.wrist_img_array, self.wrist_color_frame)
                 elapsed_time = time.time() - start_time
                 sleep_time = frame_duration - elapsed_time
                 if sleep_time > 0:
                     time.sleep(sleep_time)
-                # print(1/(time.time() - start_time))
         finally:
             self.head_cap.release()
 
@@ -423,11 +345,6 @@ class HumanDataCollector:
         right_landmarks_data = self.tele_vision.right_landmarks
         # head_data: [4, 4]
         head_data = self.tele_vision.head_matrix
-        
-        # print('left_hand_data', left_hand_data)
-        # print('left hand data shape', left_hand_data.shape)
-        # print('left_landmarks_data', left_landmarks_data)
-        # print('left_landmarks_data shape', left_landmarks_data.shape)
         
         left_wrist_pos = left_hand_data[:3, 3]
         left_wrist_rot = left_hand_data[:3, :3]
@@ -474,7 +391,6 @@ class HumanDataCollector:
         
         # reset
         if left_pinch_dist1 < 0.008 and left_pinch_dist0 > 0.05 and left_pinch_dist2 > 0.05 and left_pinch_dist3 > 0.05 and time.time() - self.last_reset_time > 3.0:
-            # self.robot_reset_publisher.publish(self.robot_reset_msg)
             self.on_reset = True
             self.on_collect = False
             self.last_reset_time = time.time()
@@ -633,10 +549,7 @@ class HumanDataCollector:
         if self.args.use_wrist_camera:
             for eef_idx in self.manipulate_eef_idx:
                 self.img_wrist_mask[self.manipulate_eef_idx] = True
-        # though disable the robot body xyz actions for stability, it should be included the proprio info.
         self.proprio_body_mask = np.array([True, True, True, True, True, True])
-        # within single gripper manipulation mode: (1) the inactive gripper does not directly have the 6d pose; (2) introduces irrelevant info.
-        # even if we would consider bimanual mode, the inactive gripper 6d pose of the single gripper manipulation mode is still less relevant
         self.proprio_eef_mask = np.array([False] * 12)
         self.proprio_gripper_mask = np.array([False, False])
         self.proprio_other_mask = np.array([False, False])            
@@ -767,17 +680,14 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
 
     parser = argparse.ArgumentParser(prog="teleoperation with apple vision pro and vuer")
-    # command publish rate
-    # - on hand move and on cam move frequence, important
     parser.add_argument("--head_camera_type", type=int, default=1, help="0=realsense, 1=stereo rgb camera")
-    parser.add_argument("--use_wrist_camera", type=str2bool, default=False, help="whether to use wrist camera for real-robot teleop")
+    parser.add_argument("--use_wrist_camera", type=str2bool, default=False, help="whether to use wrist camera")
     parser.add_argument("--desired_stream_fps", type=int, default=60, help="desired camera streaming fps to vuer")
     parser.add_argument("--control_freq", type=int, default=60, help="frequency to record human data")
     parser.add_argument("--collect_data", type=str2bool, default=True, help="whether to collect data")
     parser.add_argument("--manipulate_mode", type=int, default=1, help="1: right eef; 2: left eef; 3: bimanual")
     parser.add_argument('--save_video', type=str2bool, default=True, help="whether to collect save videos of camera views when storing the data")
     parser.add_argument("--exp_name", type=str, default='test')
-    # exp_name
 
     args = parser.parse_args()
     

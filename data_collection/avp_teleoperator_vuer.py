@@ -41,23 +41,15 @@ class AVPTeleoperator:
             self.init_cameras()
             if self.args.head_camera_type == 0:
                 img_shape = (self.head_frame_res[0], self.head_frame_res[1], 3)
-                # wrist_img_shape = (self.wrist_resolution[0], self.wrist_resolution[1], 3)
                 self.shm = shared_memory.SharedMemory(create=True, size=np.prod(img_shape) * np.uint8().itemsize, name=Cfg.teleoperation.shm_name)
-                # self.wrist_shm = shared_memory.SharedMemory(create=True, size=np.prod(wrist_img_shape) * np.uint8().itemsize, name=Cfg.teleoperation.wrist_shm_name)
                 self.img_array = np.ndarray(img_shape, dtype=np.uint8, buffer=self.shm.buf)
                 self.img_array[:] = np.zeros(img_shape, dtype=np.uint8)
-                # self.wrist_img_array = np.ndarray(wrist_img_shape, dtype=np.uint8, buffer=self.wrist_shm.buf)
-                # self.wrist_img_array[:] = np.zeros(wrist_img_shape, dtype=np.uint8)
                 self.tele_vision = OpenTeleVision(self.head_frame_res, self.shm.name, False)
             elif self.args.head_camera_type == 1:
                 img_shape = (self.head_frame_res[0], 2 * self.head_frame_res[1], 3)
-                # wrist_img_shape = (self.wrist_resolution[0], self.wrist_resolution[1], 3)
                 self.shm = shared_memory.SharedMemory(create=True, size=np.prod(img_shape) * np.uint8().itemsize, name=Cfg.teleoperation.shm_name)
-                # self.wrist_shm = shared_memory.SharedMemory(create=True, size=np.prod(wrist_img_shape) * np.uint8().itemsize, name=Cfg.teleoperation.wrist_shm_name)
                 self.img_array = np.ndarray(img_shape, dtype=np.uint8, buffer=self.shm.buf)
                 self.img_array[:] = np.zeros(img_shape, dtype=np.uint8)
-                # self.wrist_img_array = np.ndarray(wrist_img_shape, dtype=np.uint8, buffer=self.wrist_shm.buf)
-                # self.wrist_img_array[:] = np.zeros(wrist_img_shape, dtype=np.uint8)
                 self.tele_vision = OpenTeleVision(self.head_frame_res, self.shm.name, True)
             else:
                 raise NotImplementedError("Not supported camera.")
@@ -200,10 +192,6 @@ class AVPTeleoperator:
             self.teleoperation_mode = self.fsm_to_teleop_mode_mapping[self.fsm_state_msg.data]
             self.fsm_publisher.publish(self.fsm_state_msg)
             print("Begin to receive. Initial receive status reset.")
-        # elif msg.data == 2:
-        #     self.begin_to_receive = True
-        #     self.initial_receive = True
-        #     print("Ready to record!")
         self.is_changing_reveive_status = False
     
     def update_manipulate_eef_idx(self):
@@ -371,13 +359,9 @@ class AVPTeleoperator:
                 while not rospy.is_shutdown():
                     start_time = time.time()
                     ret, frame = self.head_cap.read()
-                    # print('frame 0', frame.shape)
                     frame = cv2.resize(frame, (2 * self.head_frame_res[1], self.head_frame_res[0]))
-                    # print('frame 1', frame.shape)
                     image_left = frame[:, :self.head_frame_res[1], :]
-                    # print('image_left', image_left.shape)
                     image_right = frame[:, self.head_frame_res[1]:, :]
-                    # print('image right', image_right.shape)
                     if self.crop_size_w != 0:
                         bgr = np.hstack((image_left[self.crop_size_h:, self.crop_size_w:-self.crop_size_w],
                                         image_right[self.crop_size_h:, self.crop_size_w:-self.crop_size_w]))
@@ -386,14 +370,11 @@ class AVPTeleoperator:
                                         image_right[self.crop_size_h:, :]))
 
                     self.head_color_frame = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
-                    # print('self.img_array', self.img_array.shape)
-                    # print('self.head_color_frame', self.head_color_frame.shape)
                     np.copyto(self.img_array, self.head_color_frame)
                     elapsed_time = time.time() - start_time
                     sleep_time = frame_duration - elapsed_time
                     if sleep_time > 0:
                         time.sleep(sleep_time)
-                    # print(1/(time.time() - start_time))
             finally:
                 self.head_cap.release()
         else:
@@ -406,22 +387,15 @@ class AVPTeleoperator:
                 start_time = time.time()
                 ret, frame = self.wrist_cap1.read()
                 wrist_color_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                # print('wrist_color_frame', wrist_color_frame.shape)
                 self.wrist_color_frame = cv2.resize(wrist_color_frame, (self.wrist_view_resolution[1], self.wrist_view_resolution[0]))
-                # print('self.wrist_color_frame', self.wrist_color_frame.shape)
-                # np.copyto(self.wrist_img_array, self.wrist_color_frame)
                 elapsed_time = time.time() - start_time
                 sleep_time = frame_duration - elapsed_time
                 if sleep_time > 0:
                     time.sleep(sleep_time)
-                # print(1/(time.time() - start_time))
         finally:
             self.head_cap.release()
         
     def publish_command(self, event=None):
-        # fps = 1 / (time.time() - self.checkpt)
-        # print('fps', fps)
-        # self.checkpt = time.time()
         # publish teleop commands at a fixed rate 
         # need to check the duration to finish one execution and if a separate thread is needed: takes 0.0002-0.0003s
         
@@ -464,12 +438,6 @@ class AVPTeleoperator:
         right_wrist_rot_new[:, 2] = right_wrist_rot[:, 2]
         right_wrist_rot = right_wrist_rot_new
 
-        # print('head rot', head_rot)
-        # print('head rpy', self.rot_mat_to_rpy_zxy(head_rot))
-        # print('left rot', left_wrist_rot)
-        # print('left rpy', self.rot_mat_to_rpy_zxy(left_wrist_rot))
-        # print('right rot', right_wrist_rot)
-        # print('right rpy', self.rot_mat_to_rpy_zxy(right_wrist_rot))
         # thumb to index finger
         left_pinch_dist0 = np.linalg.norm(left_landmarks_data[4] - left_landmarks_data[9]) 
         right_pinch_dist0 = np.linalg.norm(right_landmarks_data[4] - right_landmarks_data[9]) 
@@ -830,8 +798,6 @@ if __name__ == "__main__":
     signal.signal(signal.SIGINT, signal_handler)
 
     parser = argparse.ArgumentParser(prog="teleoperation with apple vision pro and vuer")
-    # command publish rate
-    # - on hand move and on cam move frequency, important
     parser.add_argument("--use_real_robot", type=str2bool, default=False, help="whether to use real robot.")
     parser.add_argument("--teleop_mode", type=int, default=1, help="1=right gripper, 2=left gripper, 3=bimanual")
     parser.add_argument("--head_camera_type", type=int, default=1, help="0=realsense, 1=stereo rgb camera")
@@ -841,7 +807,6 @@ if __name__ == "__main__":
     parser.add_argument("--collect_data", type=str2bool, default=False, help="whether to collect data")
     parser.add_argument('--save_video', type=str2bool, default=False, help="whether to collect save videos of camera views when storing the data")
     parser.add_argument("--exp_name", type=str, default='test')
-    # exp_name
 
     args = parser.parse_args()
     

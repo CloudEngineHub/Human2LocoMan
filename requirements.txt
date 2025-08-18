@@ -11,10 +11,8 @@ quadprog
 pygame
 pyserial
 rospkg
-quadprog
 opencv-python
 ipython
-ml_collections
 einops
 h5py
 avp_stream
