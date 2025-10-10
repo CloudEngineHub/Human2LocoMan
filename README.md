@@ -179,10 +179,9 @@ We recommend using `Ubuntu 20.04`, while we also successfully test this codebase
        cmake -DPYTHON_BUILD=TRUE ..
        make
        ```
-   * If you encounter the error `...can not be used when making a PIE object...`, add the following two lines below `project(unitree_legged_sdk)` (Line 2) in the `CMakeLists.txt` file:
+   * If you encounter the error `...can not be used when making a PIE object...`, add the following line below `set(CMAKE_CXX_FLAGS "-O3 -fPIC")` (Line 22) in the `CMakeLists.txt` file:
        ```bash
-        set(CMAKE_EXECUTABLE_FORMAT pie)
-        add_link_options(-no-pie)
+       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -no-pie")
        ```
 
 6. Install `ros_numpy` (tentative):
