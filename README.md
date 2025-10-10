@@ -145,20 +145,26 @@ We recommend using `Ubuntu 20.04`, while we also successfully test this codebase
     Note that the `numpy` version must be no later than `1.19.5` to avoid conflict with the Isaac Gym utility files.
     If you install a higher version of numpy, you can modify 'np.float' into 'np.float32' in the function 'get_axis_params' of the python file in 'isaacgym/python/isaacgym/torch_utils.py'
 
-3. Install ROS:
+3. Install locoman:
+    ```bash
+    cd locoman/
+    pip install -e .
+    ```
+
+4. Install ROS:
    * Follow the steps [here](https://wiki.ros.org/noetic/Installation/Ubuntu) to install ROS Noetic.
    * If you are using a system newer than Ubuntu 20.04 (e.g., Ubuntu 22.04), we recommand installing [ROS Noetic from RoboStack with Pixi](https://robostack.github.io/GettingStarted.html) to launch the ROS master, and then installing the following ROS Noetic packages within your `Conda` environment:
         ```bash
         conda install -c robostack -c conda-forge ros-noetic-rospy ros-noetic-sensor-msgs ros-noetic-nav-msgs
         ```
 
-4. Download and install IsaacGym Preview 4:
+5. Download and install IsaacGym Preview 4:
     * Download IsaacGym from [https://developer.nvidia.com/isaac-gym](https://developer.nvidia.com/isaac-gym). Extract the downloaded file to the root folder.
     * `cd isaacgym/python && pip install -e .`
     * Try running example `cd examples && python 1080_balls_of_solitude.py`. The code is set to run on CPU so don't worry if you see an error about GPU not being utilized.
     * IsaacGym [trouble shooting](https://docs.robotsfan.com/isaacgym/install.html#troubleshooting)
 
-5. Build and install Go1 SDK.
+6. Build and install Go1 SDK.
    * First, Download the sdk in the folder of this repo
        ```bash
         git clone https://github.com/unitreerobotics/unitree_legged_sdk.git
@@ -183,14 +189,14 @@ We recommend using `Ubuntu 20.04`, while we also successfully test this codebase
        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -no-pie")
        ```
 
-6. Install `ros_numpy` (tentative):
+7. Install `ros_numpy` (tentative):
    ```bash
    git clone https://github.com/eric-wieser/ros_numpy.git
    cd ros_numpy
    pip install -e .
    ```
 
-7. Install `jemalloc` to optimize memory allocation during training:
+8. Install `jemalloc` to optimize memory allocation during training:
    * Follow the steps [here](https://support.sentieon.com/appnotes/jemalloc/).
    * Use Ubuntu 20.04 as an example:
    ```bash
@@ -198,7 +204,7 @@ We recommend using `Ubuntu 20.04`, while we also successfully test this codebase
    sudo apt install libjemalloc2
    echo 'export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libjemalloc.so.2' >> ~/.bashrc
    ```
-8. Following the instructions in [OpenTeleVision](https://github.com/OpenTeleVision/TeleVision) to install [mkcert](https://github.com/FiloSottile/mkcert) and ca-certificats on Vision Pro.
+9. Following the instructions in [OpenTeleVision](https://github.com/OpenTeleVision/TeleVision) to install [mkcert](https://github.com/FiloSottile/mkcert) and ca-certificats on Vision Pro.
 
 ## Hardware and Robot Setup
 

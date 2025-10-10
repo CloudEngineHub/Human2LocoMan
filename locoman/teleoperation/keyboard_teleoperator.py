@@ -1,17 +1,11 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
-
 import threading
-
 import rospy
 from std_msgs.msg import Float32MultiArray, Int32
-
 import sys
 from select import select
-
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 if sys.platform == 'win32':
     import msvcrt

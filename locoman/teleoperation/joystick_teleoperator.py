@@ -1,5 +1,3 @@
-import os, sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import rospy
 from std_msgs.msg import Float32MultiArray, Int32
 import pygame

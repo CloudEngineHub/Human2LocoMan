@@ -1,11 +1,7 @@
-import os, sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 from typing import Union
 from params_proto import Meta
 from config.config import Cfg
 import numpy as np
-import math
 
 def config_go1(Cnfg: Union[Cfg, Meta]):
     _ = Cnfg.init_state

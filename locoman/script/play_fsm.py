@@ -1,17 +1,9 @@
-from multiprocessing import shared_memory
-import os, sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-if os.path.exists("config/config.py"):
-    print(1)
-    import config
 from config.config import Cfg
 from config.go1_config import config_go1
 from config.narrow_space_config import narrow_space_config
 from config.loco_manipulation_config import loco_manipulation_config
 import argparse
 import rospy
-import isaacgym
-
 
 def str2bool(v):
     if isinstance(v, bool):

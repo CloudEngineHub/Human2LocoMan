@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from __future__ import print_function
-import os, sys
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import sys
 from config.config import Cfg
 
 import threading
