@@ -141,7 +141,6 @@ We recommend using `Ubuntu 20.04`, while we also successfully test this codebase
 2. Install dependencies:
     ```bash
     pip install -e .
-    conda install pinocchio -c conda-forge
     ```
     Note that the `numpy` version must be no later than `1.19.5` to avoid conflict with the Isaac Gym utility files.
     If you install a higher version of numpy, you can modify 'np.float' into 'np.float32' in the function 'get_axis_params' of the python file in 'isaacgym/python/isaacgym/torch_utils.py'

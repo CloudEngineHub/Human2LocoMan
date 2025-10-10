@@ -30,3 +30,4 @@ aiohttp==3.9.5
 aiohttp_cors==0.7.0
 pyrealsense2
 huggingface-hub==0.33.5
+pin==2.7.0
