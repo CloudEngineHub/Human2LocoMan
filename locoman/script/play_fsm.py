@@ -4,6 +4,7 @@ from config.narrow_space_config import narrow_space_config
 from config.loco_manipulation_config import loco_manipulation_config
 import argparse
 import rospy
+import isaacgym
 
 def str2bool(v):
     if isinstance(v, bool):
