@@ -165,7 +165,7 @@ We recommend using `Ubuntu 20.04`, while we also successfully test this codebase
     * IsaacGym [trouble shooting](https://docs.robotsfan.com/isaacgym/install.html#troubleshooting)
 
 6. Build and install Go1 SDK.
-   * First, Download the sdk in the folder of this repo
+   * First, Download the sdk in the folder of `locoman/` of this repo
        ```bash
         git clone https://github.com/unitreerobotics/unitree_legged_sdk.git
        ```
