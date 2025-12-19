@@ -19,9 +19,6 @@ sys.path.append(parent_dir)
 from algos.mxt_utils import load_data, compute_dict_mean, set_seed # data functions
 from algos.policy import make_policy, make_optimizer
 
-from locoman.config.config import Cfg
-from locoman.config.go1_config import config_go1
-
 import yaml
 import gc
 
@@ -401,8 +398,6 @@ if __name__ == '__main__':
     torch.cuda.set_device(args['gpu_id'])
     PROJECT_NAME = args['wandb_name'] # 'Human2Locoman'
     WANDB_USERNAME = "yarun"
-    
-    config_go1(Cfg)
-    
+
     main_train(args)
     
