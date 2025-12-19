@@ -617,17 +617,4 @@ class Cfg(PrefixProto, cli=False):
         config.asset_options = asset_options
         config.self_collisions = 0  # 1 to disable, 0 to enable...bitwise filter
         return config
-    
-    def get_act_config():
-        from ml_collections import ConfigDict
-        import os
-        config = ConfigDict()
-        cur_dir = os.path.dirname(os.path.abspath(__file__))
-        parent_dir = os.path.dirname(cur_dir)        
-        config.dataset_dir = os.path.join(parent_dir, 'demonstrations/real_robot')
-        config.num_episodes = 60
-        config.episode_len = 1000
-        config.camera_names = ["main"]
-        return config
-
 

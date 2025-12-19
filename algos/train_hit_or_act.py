@@ -10,22 +10,8 @@ from itertools import repeat
 from tqdm import tqdm
 import json
 import wandb
-
-for path in sys.path:
-    if 'locoman_teleop' in path:
-        sys.path.remove(path)
-
-cur_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(cur_dir)
-parent_dir = os.path.dirname(cur_dir)
-sys.path.append(parent_dir)
-
 from utils import compute_dict_mean, set_seed, load_data # data functions
 from policy import make_policy, make_optimizer
-
-from locoman.config.config import Cfg
-from locoman.config.go1_config import config_go1
-
 
 def forward_pass(data, policy):
     image_data, qpos_data, action_data, is_pad, action_mask_data = data
@@ -432,8 +418,5 @@ if __name__ == '__main__':
     torch.cuda.set_device(args['gpu_id'])
     PROJECT_NAME = args['wandb_name']
     WANDB_USERNAME = "WANDB_USERNAME"
-    
-    # cfg = Cfg()
-    config_go1(Cfg)
     
     main_train(args)

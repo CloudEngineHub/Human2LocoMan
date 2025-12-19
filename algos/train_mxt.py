@@ -11,21 +11,11 @@ from tqdm import tqdm
 import json
 import wandb
 
-cur_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(cur_dir)
-parent_dir = os.path.dirname(cur_dir)
-sys.path.append(parent_dir)
-
 from algos.mxt_utils import load_data, compute_dict_mean, set_seed # data functions
 from algos.policy import make_policy, make_optimizer
 
 import yaml
 import gc
-
-cur_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.append(cur_dir)
-parent_dir = os.path.dirname(cur_dir)
-sys.path.append(parent_dir)
 
 def forward_pass(batch, policy):
     
@@ -397,7 +387,7 @@ if __name__ == '__main__':
     args = vars(parser.parse_args())
     torch.cuda.set_device(args['gpu_id'])
     PROJECT_NAME = args['wandb_name'] # 'Human2Locoman'
-    WANDB_USERNAME = "yarun"
+    WANDB_USERNAME = "WANDB_USERNAME"
 
     main_train(args)
     
