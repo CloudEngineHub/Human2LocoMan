@@ -246,7 +246,7 @@ class CrossTransformer(nn.Module):
                 out_mask.append(output_mask)
             else:
                 if 'state' in modality:
-                    input_data = x[modality] * x_mask[modality].unsqueeze(-2) # apply mask
+                    input_data = (x[modality] * x_mask[modality]).unsqueeze(-2) # apply mask
                 else:
                     input_data = x[modality]
                 
@@ -276,7 +276,7 @@ class CrossTransformer(nn.Module):
         feature_tokens = self.preprocess_tokens(feature_tokens, embodiment) # added pos_embd
         query_pos_embd = get_sinusoid_encoding_table(np.sum([len for len in self.query_len.values()]), self.transformer_body.d_model).squeeze().to(feature_tokens.device)
         dummy_features_pos_embd = torch.zeros_like(feature_tokens)[0].to(feature_tokens.device)
-        trunk_features = self.transformer_body(feature_tokens, feature_mask, query_pos_embd, dummy_features_pos_embd)[0]
+        trunk_features = self.transformer_body(feature_tokens, feature_mask, query_pos_embd, dummy_features_pos_embd)[-1]
         output_features_dict = self.partition_trunk_tokens(trunk_features, embodiment)
         for modality in output_features_dict.keys():
             output_features_dict[modality] = self.postprocess_tokens(output_features_dict[modality])
